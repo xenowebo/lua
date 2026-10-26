@@ -1,5 +1,3 @@
-if game.PlaceID = 3101667897 then
-
 local SG = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local Layout = Instance.new("UIListLayout")
