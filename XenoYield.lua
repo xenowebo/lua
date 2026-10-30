@@ -1,5 +1,5 @@
 if IY_LOADED and not _G.IY_DEBUG then
-	-- error("Infinite Yield is already running!", 0)
+	-- error("XenoYield is already running!", 0)
 	return
 end
 
@@ -93,23 +93,6 @@ TextChatService = Services.TextChatService
 CaptureService = Services.CaptureService
 VoiceChatService = Services.VoiceChatService
 SocialService = Services.SocialService
-
-task.spawn(function()
-		local notification = {
-		Title = "Xen0 FE Script",
-		Text = "By blixxARSENAL",
-		Icon = "rbxthumb://type=Asset&id=8517942534&w=150&h=150",
-		Duration = 5.5
-	}
-
-	for _ = 1, 10 do
-		local success = pcall(function()
-			StarterGui:SetCore("SendNotification", notification)
-		end)
-		if success then return end
-		task.wait(1)
-	end
-end)
 
 PlayerGui = cloneref(Players.LocalPlayer:FindFirstChildWhichIsA("PlayerGui"))
 COREGUI = Services.CoreGui or PlayerGui
@@ -376,7 +359,7 @@ Title.BorderSizePixel = 0
 Title.Size = UDim2.new(0, 250, 0, 20)
 Title.Font = Enum.Font.SourceSans
 Title.TextSize = 18
-Title.Text = "Xen0's FE"
+Title.Text = "XenoYield FE v69"
 
 do
 	local emoji = ({
@@ -3136,7 +3119,7 @@ function saves()
 		if jsonAttempts >= 10 then
 			nosaves = true
 			useFactorySettings()
-			createPopup("File Error", "Sorry, we have attempted to parse your save file, but it is unreadable!\n\nInfinite Yield is now using factory settings until your exploit's file system works.\n\nYour save file has not been deleted.")
+			createPopup("File Error", "Sorry, we have attempted to parse your save file, but it is unreadable!\n\nXenoYield is now using factory settings until your exploit's file system works.\n\nYour save file has not been deleted.")
 		else
 			nosaves = true
 			useFactorySettings()
@@ -3992,7 +3975,7 @@ function sendChatWebhook(player, message)
 				Url = "https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=" .. id .. "&size=420x420&format=Png&isCircular=false",
 				Method = "GET"
 			}).Body)["data"]
-			avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://files.catbox.moe/i968v2.jpg"
+			avatar = d and d[1].state == "Completed" and d[1].imageUrl or "https://raw.githubusercontent.com/infyiff/backup/refs/heads/main/assets/plain.png"
 			avatarcache[id] = avatar
 		end
 		local log = HttpService:JSONEncode({
@@ -4034,7 +4017,7 @@ SaveChatlogs.MouseButton1Down:Connect(function()
 		if #scroll_2:GetChildren() > 0 then
 			notify("Loading",'Hold on a sec')
 			local placeName = CleanFileName(MarketplaceService:GetProductInfo(PlaceId).Name)
-			local writelogs = '-- Infinite Yield Chat logs for "'..placeName..'"\n'
+			local writelogs = '-- XenoYield Chat logs for "'..placeName..'"\n'
 			for _, child in pairs(scroll_2:GetChildren()) do
 				writelogs = writelogs..'\n'..child.Text
 			end
@@ -4488,7 +4471,7 @@ function autoComplete(str,curText)
 end
 
 CMDs = {}
-CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the Infinite Yield discord server.'}
+CMDs[#CMDs + 1] = {NAME = 'discord / support / help', DESC = 'Invite to the XenoYield discord server.'}
 CMDs[#CMDs + 1] = {NAME = 'guiscale [number]', DESC = 'Changes the size of the gui. [number] accepts decimals and whole numbers. Min is 0.4 and Max is 2'}
 CMDs[#CMDs + 1] = {NAME = 'console', DESC = 'Opens the Roblox console'}
 CMDs[#CMDs + 1] = {NAME = 'oldconsole', DESC = 'Loads an old-themed Roblox console'}
@@ -6596,7 +6579,7 @@ end)
 addcmd('keepiy', {}, function(args, speaker)
 	if queueteleport then
 		KeepInfYield = true
-		notify('KeepIY','Infinite Yield will now run after you teleport')
+		notify('KeepIY','XenoYield will now run after you teleport')
 		updatesaves()
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
@@ -6606,7 +6589,7 @@ end)
 addcmd('unkeepiy', {}, function(args, speaker)
 	if queueteleport then
 		KeepInfYield = false
-		notify('KeepIY','Infinite Yield will no longer run after you teleport')
+		notify('KeepIY','XenoYield will no longer run after you teleport')
 		updatesaves()
 	else
 		notify('Incompatible Exploit','Your exploit does not support this command (missing queue_on_teleport)')
@@ -12413,6 +12396,26 @@ addcmd('stareat',{'stare'},function(args, speaker)
 		end
 
 		stareLoop = RunService.RenderStepped:Connect(stareFunc)
+	end
+end)
+
+addcmd('unstareat',{'unstare','nostare','nostareat'},function(args, speaker)
+	if stareLoop then
+		stareLoop:Disconnect()
+	end
+end)
+
+RolewatchData = {Group = 0, Role = "", Leave = false}
+RolewatchConnection = Players.PlayerAdded:Connect(function(player)
+	if RolewatchData.Group == 0 then return end
+	if player:IsInGroup(RolewatchData.Group) then
+		if tostring(player:GetRoleInGroup(RolewatchData.Group)):lower() == RolewatchData.Role:lower() then
+			if RolewatchData.Leave == true then
+				Players.LocalPlayer:Kick("\n\nRolewatch\nPlayer \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"\n")
+			else
+				notify("Rolewatch", "Player \"" .. tostring(player.Name) .. "\" has joined with the Role \"" .. RolewatchData.Role .. "\"")
+			end
+		end
 	end
 end)
 
