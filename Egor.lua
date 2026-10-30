@@ -1,6 +1,3 @@
---[[
-	WARNING: Heads up! This script has not been verified by ScriptBlox. Use at your own risk!
-]]
 -- LocalScript (StarterPlayerScripts or run via Delta)
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
