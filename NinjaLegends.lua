@@ -20,21 +20,21 @@ local Section = Tab:AddSection({
 Tab:AddButton({
 	Name = "Inf Coins",
 	Callback = function()
-      		loadstring(game:HttpGet("https://raw.githubusercontent.com/xenowebo/lua/main/Xen0Ninja1.lua"))()
+      		loadstring(game:HttpGet("https://raw.githubusercontent.com/xenowebo/lua/main/localNinja1.lua"))()
   	end    
 })
 
 Tab:AddButton({
 	Name = "CHI Farm GUI",
 	Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/xenowebo/lua/main/Xen0Ninja2.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/xenowebo/lua/main/localNinja2.lua"))()
   	end    
 })
 
 Tab:AddButton({
 	Name = "Unlock All Islands",
 	Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/xenowebo/lua/main/Xen0Ninja3.lua"))()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/xenowebo/lua/main/localNinja3.lua"))()
   	end    
 })
 
