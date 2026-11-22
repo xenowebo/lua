@@ -1,336 +1,482 @@
-local io0iLoOIl=(getfenv and getfenv(1)) or _ENV or _G
-local jjI1j0,io1Olojj=string.byte,string.char
-local function l0iiji(liOL0ol1Io,jj1iiLoL1o)
-local LL01jO11I=""
-local LlllLIIiiLoojl=#jj1iiLoL1o
-for lL00iijj=1,#liOL0ol1Io do LL01jO11I=LL01jO11I..io1Olojj((jjI1j0(liOL0ol1Io,lL00iijj)-jjI1j0(jj1iiLoL1o,(lL00iijj-1)%LlllLIIiiLoojl+1))%256) end
-return LL01jO11I
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local Player = Players.LocalPlayer
+-- GUI Setup
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "KilasikFlingGUI"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = game:GetService("CoreGui")
+-- Main Frame
+local MainFrame = Instance.new("Frame")
+MainFrame.Size = UDim2.new(0, 300, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -150, 0.5, -175)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.Parent = ScreenGui
+-- Title Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TitleBar.BorderSizePixel = 0
+TitleBar.Parent = MainFrame
+-- Title
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -30, 1, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "Xeno Fling Gui V2"
+Title.TextColor3 = Color3.fromRGB(255, 80, 80)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
+Title.Parent = TitleBar
+-- Close Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+CloseButton.BorderSizePixel = 0
+CloseButton.Text = "X"
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.TextSize = 18
+CloseButton.Parent = TitleBar
+-- Status Label
+local StatusLabel = Instance.new("TextLabel")
+StatusLabel.Position = UDim2.new(0, 10, 0, 40)
+StatusLabel.Size = UDim2.new(1, -20, 0, 25)
+StatusLabel.BackgroundTransparency = 1
+StatusLabel.Text = "Select targets to fling"
+StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+StatusLabel.Font = Enum.Font.SourceSans
+StatusLabel.TextSize = 16
+StatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+StatusLabel.Parent = MainFrame
+-- Player Selection Frame
+local SelectionFrame = Instance.new("Frame")
+SelectionFrame.Position = UDim2.new(0, 10, 0, 70)
+SelectionFrame.Size = UDim2.new(1, -20, 0, 200)
+SelectionFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+SelectionFrame.BorderSizePixel = 0
+SelectionFrame.Parent = MainFrame
+-- Player List ScrollFrame
+local PlayerScrollFrame = Instance.new("ScrollingFrame")
+PlayerScrollFrame.Position = UDim2.new(0, 5, 0, 5)
+PlayerScrollFrame.Size = UDim2.new(1, -10, 1, -10)
+PlayerScrollFrame.BackgroundTransparency = 1
+PlayerScrollFrame.BorderSizePixel = 0
+PlayerScrollFrame.ScrollBarThickness = 6
+PlayerScrollFrame.CanvasSize = UDim2.new(0, 0, 0, 0)
+PlayerScrollFrame.Parent = SelectionFrame
+-- Start Fling Button
+local StartButton = Instance.new("TextButton")
+StartButton.Position = UDim2.new(0, 10, 0, 280)
+StartButton.Size = UDim2.new(0.5, -15, 0, 40)
+StartButton.BackgroundColor3 = Color3.fromRGB(0, 180, 0)
+StartButton.BorderSizePixel = 0
+StartButton.Text = "START FLING"
+StartButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StartButton.Font = Enum.Font.SourceSansBold
+StartButton.TextSize = 18
+StartButton.Parent = MainFrame
+-- Stop Fling Button
+local StopButton = Instance.new("TextButton")
+StopButton.Position = UDim2.new(0.5, 5, 0, 280)
+StopButton.Size = UDim2.new(0.5, -15, 0, 40)
+StopButton.BackgroundColor3 = Color3.fromRGB(180, 0, 0)
+StopButton.BorderSizePixel = 0
+StopButton.Text = "STOP FLING"
+StopButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+StopButton.Font = Enum.Font.SourceSansBold
+StopButton.TextSize = 18
+StopButton.Parent = MainFrame
+-- Select/Deselect Buttons
+local SelectAllButton = Instance.new("TextButton")
+SelectAllButton.Position = UDim2.new(0, 10, 0, 330)
+SelectAllButton.Size = UDim2.new(0.5, -15, 0, 30)
+SelectAllButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+SelectAllButton.BorderSizePixel = 0
+SelectAllButton.Text = "SELECT ALL"
+SelectAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+SelectAllButton.Font = Enum.Font.SourceSans
+SelectAllButton.TextSize = 14
+SelectAllButton.Parent = MainFrame
+local DeselectAllButton = Instance.new("TextButton")
+DeselectAllButton.Position = UDim2.new(0.5, 5, 0, 330)
+DeselectAllButton.Size = UDim2.new(0.5, -15, 0, 30)
+DeselectAllButton.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+DeselectAllButton.BorderSizePixel = 0
+DeselectAllButton.Text = "DESELECT ALL"
+DeselectAllButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+DeselectAllButton.Font = Enum.Font.SourceSans
+DeselectAllButton.TextSize = 14
+DeselectAllButton.Parent = MainFrame
+-- Variables
+local SelectedTargets = {}
+local PlayerCheckboxes = {}
+local FlingActive = false
+local FlingConnection = nil
+getgenv().OldPos = nil
+getgenv().FPDH = workspace.FallenPartsDestroyHeight
+-- Function to update player list
+local function RefreshPlayerList()
+    -- Clear existing player entries
+    for _, child in pairs(PlayerScrollFrame:GetChildren()) do
+        child:Destroy()
+    end
+    PlayerCheckboxes = {}
+    
+    -- Get players and sort them
+    local PlayerList = Players:GetPlayers()
+    table.sort(PlayerList, function(a, b) return a.Name:lower() < b.Name:lower() end)
+    
+    -- Create entries for each player
+    local yPosition = 5
+    for _, player in ipairs(PlayerList) do
+        if player ~= Player then -- Don't include yourself
+            -- Create player entry frame
+            local PlayerEntry = Instance.new("Frame")
+            PlayerEntry.Size = UDim2.new(1, -10, 0, 30)
+            PlayerEntry.Position = UDim2.new(0, 5, 0, yPosition)
+            PlayerEntry.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+            PlayerEntry.BorderSizePixel = 0
+            PlayerEntry.Parent = PlayerScrollFrame
+            
+            -- Create checkbox
+            local Checkbox = Instance.new("TextButton")
+            Checkbox.Size = UDim2.new(0, 24, 0, 24)
+            Checkbox.Position = UDim2.new(0, 3, 0.5, -12)
+            Checkbox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            Checkbox.BorderSizePixel = 0
+            Checkbox.Text = ""
+            Checkbox.Parent = PlayerEntry
+            
+            -- Checkmark (initially invisible)
+            local Checkmark = Instance.new("TextLabel")
+            Checkmark.Size = UDim2.new(1, 0, 1, 0)
+            Checkmark.BackgroundTransparency = 1
+            Checkmark.Text = "✓"
+            Checkmark.TextColor3 = Color3.fromRGB(0, 255, 0)
+            Checkmark.TextSize = 18
+            Checkmark.Font = Enum.Font.SourceSansBold
+            Checkmark.Visible = SelectedTargets[player.Name] ~= nil
+            Checkmark.Parent = Checkbox
+            
+            -- Player name label
+            local NameLabel = Instance.new("TextLabel")
+            NameLabel.Size = UDim2.new(1, -35, 1, 0)
+            NameLabel.Position = UDim2.new(0, 30, 0, 0)
+            NameLabel.BackgroundTransparency = 1
+            NameLabel.Text = player.Name
+            NameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            NameLabel.TextSize = 16
+            NameLabel.Font = Enum.Font.SourceSans
+            NameLabel.TextXAlignment = Enum.TextXAlignment.Left
+            NameLabel.Parent = PlayerEntry
+            
+            -- Make entire entry clickable
+            local ClickArea = Instance.new("TextButton")
+            ClickArea.Size = UDim2.new(1, 0, 1, 0)
+            ClickArea.BackgroundTransparency = 1
+            ClickArea.Text = ""
+            ClickArea.ZIndex = 2
+            ClickArea.Parent = PlayerEntry
+            
+            -- Selection toggle on click
+            ClickArea.MouseButton1Click:Connect(function()
+                if SelectedTargets[player.Name] then
+                    SelectedTargets[player.Name] = nil
+                    Checkmark.Visible = false
+                else
+                    SelectedTargets[player.Name] = player
+                    Checkmark.Visible = true
+                end
+                
+                UpdateStatus()
+            end)
+            
+            -- Store reference to this player's UI
+            PlayerCheckboxes[player.Name] = {
+                Entry = PlayerEntry,
+                Checkmark = Checkmark
+            }
+            
+            yPosition = yPosition + 35
+        end
+    end
+    
+    -- Update scrollframe canvas size
+    PlayerScrollFrame.CanvasSize = UDim2.new(0, 0, 0, yPosition + 5)
 end
-local II0I1illj=io0iLoOIl[l0iiji("b\215\\\006\135\182","\239r\240\161$B\164")]
-local LL1Ooij0oOll=io0iLoOIl[l0iiji("a\237m\015\\\252","\238y\251\166\238\149>")][l0iiji("A\158\129","\206)\031\135\165A\201")]
-local jI1OillI1ol0i=io0iLoOIl[l0iiji("z\0206r\024","\006\179\212")][l0iiji("\160\210\022\192\229\177","=c\168]\132")]
-local LOoI010OOijo=io0iLoOIl[l0iiji("h\192\1671","\251_3\201\016\002\024")][l0iiji("Q\173\198\165]","\235AW6")]
-local IiIoOIoo0lo0=io0iLoOIl[l0iiji("\028\247\024\160\189\n\237\028","\168\136\170+P")]
-local loOLIIojOo=io0iLoOIl[l0iiji("@\003$\235M","\219\145\178|")]
-local L0LO1oIoOij=io0iLoOIl[l0iiji("\206O^\250","Z\214\238\149\1835/")]
-local Ll1ol0OIOio0=io0iLoOIl[l0iiji("\204p\207H\247\255\198\127\188=\254\240","e\011[\219\146\139")]
-local IILI0Ioj=io0iLoOIl[l0iiji("\210\189`L\178\229","`\\\233\229Mq\205")]
-local iOj0illj=io0iLoOIl[l0iiji("\193\r\243\018","S\168{\158")]
-local io1ILoiOIo0i,iILillOjoo,IO01jO1lIi,ijI0I0Llj1oLj=l0iiji("^\000\184L\160","\234\159V\224;"),l0iiji("\242\190h\152\000\178i\163","\140I\2505"),l0iiji("\170!\148R\1764","K\194+\222"),l0iiji("L\183\173\188\236O","\237XJ[\128\227")
-local ill1LiLl=IiIoOIoo0lo0("7955")*2+(io1Olojj(77,72)=="MH" and 7002 or 88)+II0I1illj("#",0,0,0,0,0,0)*26+jjI1j0("/")
-local ijlO0OoLOil=io0iLoOIl[l0iiji("\025\145[\164E","\1650\2498\224")][l0iiji("\127r\n\132","\015\017\167\025\249\199")] or function(...) return {n=II0I1illj("#",...),...} end
-local L111LO1O00I=io0iLoOIl[l0iiji("\011k\234\207M","\151\n\136c\232k")][l0iiji("'N\014m\168G","\178\224\158\012E\220\003")] or io0iLoOIl[l0iiji("X\011\246\243{\201","\227\157\134\146\024^")]
-local i0jj11Olo1I0="0rizZM3xqVmdUKluCe4T9D5t6EAXHQc1hBJYgnbSPvsw7IR/yo2W+8kfNOFaLGpj"
-local function L1L0iojIjI(I1oiL0I)
-local Ii11iiIoiLO={}
-for IOIiOLLjI1j11=1,64 do Ii11iiIoiLO[jjI1j0(i0jj11Olo1I0,IOIiOLLjI1j11)]=IOIiOLLjI1j11-1 end
-local LOLL10,i1joiL0O,ijlji0OOljL11I,ljlljolj0j0={},0,0,0
-for IOIiOLLjI1j11=1,#I1oiL0I do
-local lOO10Li0LOIL=Ii11iiIoiLO[jjI1j0(I1oiL0I,IOIiOLLjI1j11)]
-if lOO10Li0LOIL then
-i1joiL0O=i1joiL0O*64+lOO10Li0LOIL
-ijlji0OOljL11I=ijlji0OOljL11I+6
-if ijlji0OOljL11I>=8 then ijlji0OOljL11I=ijlji0OOljL11I-8 ljlljolj0j0=ljlljolj0j0+1 LOLL10[ljlljolj0j0]=io1Olojj(LOoI010OOijo(i1joiL0O/(2^ijlji0OOljL11I))%256) i1joiL0O=i1joiL0O%(2^ijlji0OOljL11I) end
+-- Count selected targets
+local function CountSelectedTargets()
+    local count = 0
+    for _ in pairs(SelectedTargets) do
+        count = count + 1
+    end
+    return count
 end
+-- Update status display
+local function UpdateStatus()
+    local count = CountSelectedTargets()
+    if FlingActive then
+        StatusLabel.Text = "Flinging " .. count .. " target(s)"
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 80, 80)
+    else
+        StatusLabel.Text = count .. " target(s) selected" 
+        StatusLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
 end
-return jI1OillI1ol0i(LOLL10)
+-- Function to select/deselect all players
+local function ToggleAllPlayers(select)
+    for _, player in ipairs(Players:GetPlayers()) do
+        if player ~= Player then
+            local checkboxData = PlayerCheckboxes[player.Name]
+            if checkboxData then
+                if select then
+                    SelectedTargets[player.Name] = player
+                    checkboxData.Checkmark.Visible = true
+                else
+                    SelectedTargets[player.Name] = nil
+                    checkboxData.Checkmark.Visible = false
+                end
+            end
+        end
+    end
+    
+    UpdateStatus()
 end
-local LLI0OoOOIL="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"
-local function l1iLLLL(IllILjl1l)
-if #IllILjl1l~=29368 then loOLIIojOo("VM integrity check failed",0) end
-local IjLIj1O0iLOol=(3945914666)+ill1LiLl
-local ilOLlIjo=209
-local ioL1LLIOIoO={}
-local j0i01o,ji1O0O1j00=1,0
-for joli0LIj=1,#IllILjl1l do
-IjLIj1O0iLOol=(IjLIj1O0iLOol*57551+2332969029)%4294967296
-local iolOjli=jjI1j0(IllILjl1l,joli0LIj)
-local i1Io11=(LOoI010OOijo(IjLIj1O0iLOol/65536)+ilOLlIjo+(joli0LIj-1)*140)%256
-local L10L10oOIL10=(iolOjli-i1Io11)%256
-ioL1LLIOIoO[joli0LIj]=io1Olojj(L10L10oOIL10)
-j0i01o=(j0i01o*257+L10L10oOIL10+1)%4294967291
-ji1O0O1j00=(ji1O0O1j00*65599+L10L10oOIL10+1)%4294967279
-ilOLlIjo=(ilOLlIjo*61+iolOjli+1)%251
+-- Show notification
+local function Message(Title, Text, Time)
+    game:GetService("StarterGui"):SetCore("SendNotification", {
+        Title = Title,
+        Text = Text,
+        Duration = Time or 5
+    })
 end
-if j0i01o~=2752554774 or ji1O0O1j00~=2561258473 then loOLIIojOo("VM integrity check failed",0) end
-return jI1OillI1ol0i(ioL1LLIOIoO)
+-- The fling function from zqyDSUWX
+local function SkidFling(TargetPlayer)
+    local Character = Player.Character
+    local Humanoid = Character and Character:FindFirstChildOfClass("Humanoid")
+    local RootPart = Humanoid and Humanoid.RootPart
+    local TCharacter = TargetPlayer.Character
+    if not TCharacter then return end
+    
+    local THumanoid
+    local TRootPart
+    local THead
+    local Accessory
+    local Handle
+    if TCharacter:FindFirstChildOfClass("Humanoid") then
+        THumanoid = TCharacter:FindFirstChildOfClass("Humanoid")
+    end
+    if THumanoid and THumanoid.RootPart then
+        TRootPart = THumanoid.RootPart
+    end
+    if TCharacter:FindFirstChild("Head") then
+        THead = TCharacter.Head
+    end
+    if TCharacter:FindFirstChildOfClass("Accessory") then
+        Accessory = TCharacter:FindFirstChildOfClass("Accessory")
+    end
+    if Accessory and Accessory:FindFirstChild("Handle") then
+        Handle = Accessory.Handle
+    end
+    if Character and Humanoid and RootPart then
+        if RootPart.Velocity.Magnitude < 50 then
+            getgenv().OldPos = RootPart.CFrame
+        end
+        
+        if THumanoid and THumanoid.Sit then
+            return Message("Error", TargetPlayer.Name .. " is sitting", 2)
+        end
+        
+        if THead then
+            workspace.CurrentCamera.CameraSubject = THead
+        elseif Handle then
+            workspace.CurrentCamera.CameraSubject = Handle
+        elseif THumanoid and TRootPart then
+            workspace.CurrentCamera.CameraSubject = THumanoid
+        end
+        
+        if not TCharacter:FindFirstChildWhichIsA("BasePart") then
+            return
+        end
+        
+        local FPos = function(BasePart, Pos, Ang)
+            RootPart.CFrame = CFrame.new(BasePart.Position) * Pos * Ang
+            Character:SetPrimaryPartCFrame(CFrame.new(BasePart.Position) * Pos * Ang)
+            RootPart.Velocity = Vector3.new(9e7, 9e7 * 10, 9e7)
+            RootPart.RotVelocity = Vector3.new(9e8, 9e8, 9e8)
+        end
+        
+        local SFBasePart = function(BasePart)
+            local TimeToWait = 2
+            local Time = tick()
+            local Angle = 0
+            repeat
+                if RootPart and THumanoid then
+                    if BasePart.Velocity.Magnitude < 50 then
+                        Angle = Angle + 100
+                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle),0 ,0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection * BasePart.Velocity.Magnitude / 1.25, CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, 1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle),0 ,0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, 0) + THumanoid.MoveDirection, CFrame.Angles(math.rad(Angle), 0, 0))
+                        task.wait()
+                    else
+                        FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, -THumanoid.WalkSpeed), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, 1.5, THumanoid.WalkSpeed), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        
+                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(math.rad(90), 0, 0))
+                        task.wait()
+                        FPos(BasePart, CFrame.new(0, -1.5, 0), CFrame.Angles(0, 0, 0))
+                        task.wait()
+                    end
+                end
+            until Time + TimeToWait < tick() or not FlingActive
+        end
+        
+        workspace.FallenPartsDestroyHeight = 0/0
+        
+        local BV = Instance.new("BodyVelocity")
+        BV.Parent = RootPart
+        BV.Velocity = Vector3.new(0, 0, 0)
+        BV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+        
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, false)
+        
+        if TRootPart then
+            SFBasePart(TRootPart)
+        elseif THead then
+            SFBasePart(THead)
+        elseif Handle then
+            SFBasePart(Handle)
+        else
+            return Message("Error", TargetPlayer.Name .. " has no valid parts", 2)
+        end
+        
+        BV:Destroy()
+        Humanoid:SetStateEnabled(Enum.HumanoidStateType.Seated, true)
+        workspace.CurrentCamera.CameraSubject = Humanoid
+        
+        -- Reset character position
+        if getgenv().OldPos then
+            repeat
+                RootPart.CFrame = getgenv().OldPos * CFrame.new(0, .5, 0)
+                Character:SetPrimaryPartCFrame(getgenv().OldPos * CFrame.new(0, .5, 0))
+                Humanoid:ChangeState("GettingUp")
+                for _, part in pairs(Character:GetChildren()) do
+                    if part:IsA("BasePart") then
+                        part.Velocity, part.RotVelocity = Vector3.new(), Vector3.new()
+                    end
+                end
+                task.wait()
+            until (RootPart.Position - getgenv().OldPos.p).Magnitude < 25
+            workspace.FallenPartsDestroyHeight = getgenv().FPDH
+        end
+    else
+        return Message("Error", "Your character is not ready", 2)
+    end
 end
-local jo1L0iIOLIl=l1iLLLL(L1L0iojIjI(LLI0OoOOIL))
-local iolOjli=1
-local function ljjILOo(joli0LIj)
-if joli0LIj<0 or iolOjli+joli0LIj-1>#jo1L0iIOLIl then loOLIIojOo("VM payload is truncated",0) end
+-- Start flinging selected targets
+local function StartFling()
+    if FlingActive then return end
+    
+    local count = CountSelectedTargets()
+    if count == 0 then
+        StatusLabel.Text = "No targets selected!"
+        wait(1)
+        StatusLabel.Text = "Select targets to fling"
+        return
+    end
+    
+    FlingActive = true
+    UpdateStatus()
+    Message("Started", "Flinging " .. count .. " targets", 2)
+    
+    -- Start flinger in separate thread
+    spawn(function()
+        while FlingActive do
+            local validTargets = {}
+            
+            -- Process all targets first to determine which are valid
+            for name, player in pairs(SelectedTargets) do
+                if player and player.Parent then
+                    validTargets[name] = player
+                else
+                    -- Remove players who left
+                    SelectedTargets[name] = nil
+                    local checkbox = PlayerCheckboxes[name]
+                    if checkbox then
+                        checkbox.Checkmark.Visible = false
+                    end
+                end
+            end
+            
+            -- Then attempt to fling each valid target
+            for _, player in pairs(validTargets) do
+                if FlingActive then
+                    SkidFling(player)
+                    -- Brief wait between targets to allow movement to reset
+                    wait(0.1)
+                else
+                    break
+                end
+            end
+            
+            -- Update status periodically
+            UpdateStatus()
+            
+            -- Wait a moment before starting next fling cycle
+            wait(0.5)
+        end
+    end)
 end
-local function iOoOOIi01iO()
-ljjILOo(1)
-local joli0LIj=jjI1j0(jo1L0iIOLIl,iolOjli)
-iolOjli=iolOjli+1
-return joli0LIj
+-- Stop flinging
+local function StopFling()
+    if not FlingActive then return end
+    
+    FlingActive = false
+    
+    UpdateStatus()
+    Message("Stopped", "Fling has been stopped", 2)
 end
-local function i11ijjjjo1LO()
-ljjILOo(2)
-local joli0LIj,L10L10oOIL10=jjI1j0(jo1L0iIOLIl,iolOjli,iolOjli+1)
-iolOjli=iolOjli+2
-return joli0LIj+L10L10oOIL10*256
-end
-local function Lji0I00I1j0oL()
-ljjILOo(4)
-local joli0LIj,L10L10oOIL10,IllILjl1l,ioL1LLIOIoO=jjI1j0(jo1L0iIOLIl,iolOjli,iolOjli+3)
-iolOjli=iolOjli+4
-return joli0LIj+L10L10oOIL10*256+IllILjl1l*65536+ioL1LLIOIoO*16777216
-end
-local function ljjOoL()
-local joli0LIj=Lji0I00I1j0oL()
-ljjILOo(joli0LIj)
-local L10L10oOIL10=LL1Ooij0oOll(jo1L0iIOLIl,iolOjli,iolOjli+joli0LIj-1)
-iolOjli=iolOjli+joli0LIj
-return L10L10oOIL10
-end
-local function IIljO1loOil()
-local joli0LIj=iOoOOIi01iO()
-local L10L10oOIL10=ljjOoL()
-if joli0LIj==0 then return IiIoOIoo0lo0(L10L10oOIL10)
-elseif joli0LIj==1 then return L10L10oOIL10
-elseif joli0LIj==2 then return 1/0
-elseif joli0LIj==3 then return -1/0
-else return 0/0 end
-end
-local function IlOIoI1ioIo(jlL1iooLl)
-if jlL1iooLl>200 then loOLIIojOo("VM function nesting limit exceeded",0) end
-local I1joOooi=iOoOOIi01iO()
-local joli0LIj=iOoOOIi01iO()
-if joli0LIj>1 then loOLIIojOo("VM invalid function flags",0) end
-local jIIlL0ljoiIO0=Lji0I00I1j0oL()
-local Lii0ILjI=jIIlL0ljoiIO0%65536
-local L10L10oOIL10=i11ijjjjo1LO()
-local LO0L00jLolOj={}
-for IllILjl1l=1,L10L10oOIL10 do local IlOo1oLOlj=i11ijjjjo1LO() LO0L00jLolOj[IllILjl1l]={IlOo1oLOlj,ljjOoL()} end
-local ioL1LLIOIoO=Lji0I00I1j0oL()
-ljjILOo(ioL1LLIOIoO*12)
-local IoI1IIi={}
-for IllILjl1l=1,ioL1LLIOIoO do
-IoI1IIi[IllILjl1l]={i11ijjjjo1LO(),Lji0I00I1j0oL(),Lji0I00I1j0oL(),i11ijjjjo1LO()}
-for li1olloI01Io=1,4 do Lii0ILjI=(Lii0ILjI*131+IoI1IIi[IllILjl1l][li1olloI01Io]%65536+li1olloI01Io)%65536 end
-end
-local iolOjli=i11ijjjjo1LO()
-local I1Ijjj11LllOL={}
-for IllILjl1l=1,iolOjli do I1Ijjj11LllOL[IllILjl1l]=IlOIoI1ioIo(jlL1iooLl+1) end
-local iolOiliLl1=i11ijjjjo1LO()
-local lIlLol1={}
-for IllILjl1l=1,iolOiliLl1 do lIlLol1[IllILjl1l]={iOoOOIi01iO(),i11ijjjjo1LO()} end
-return {I1joOooi,joli0LIj,IoI1IIi,LO0L00jLolOj,I1Ijjj11LllOL,lIlLol1,{},jIIlL0ljoiIO0,(ill1LiLl+49950+Lii0ILjI)%65536}
-end
-local function Ll0o1OoI(i1LooIl,IIIiIljo,IlOo1oLOlj,LOLLliOl0j)
-if IIIiIljo[IlOo1oLOlj]~=nil then return IIIiIljo[IlOo1oLOlj] end
-local I1oiL0I=i1LooIl[IlOo1oLOlj]
-local Ii11iiIoiLO=I1oiL0I[1]
-local IOIiOLLjI1j11=I1oiL0I[2]
-local LOLL10=(LOLLliOl0j+Ii11iiIoiLO*251+1)%65536
-local i1joiL0O={}
-for ijlji0OOljL11I=1,#IOIiOLLjI1j11 do
-LOLL10=(LOLL10*40503+12345)%65536
-i1joiL0O[ijlji0OOljL11I]=io1Olojj((jjI1j0(IOIiOLLjI1j11,ijlji0OOljL11I)-LOoI010OOijo(LOLL10/256)%256-ijlji0OOljL11I*(LOLLliOl0j%256))%256)
-end
-local ljlljolj0j0=jI1OillI1ol0i(i1joiL0O)
-if #ljlljolj0j0<5 then loOLIIojOo("VM invalid constant",0) end
-local lOO10Li0LOIL=jjI1j0(ljlljolj0j0,1)
-local I1oioI=jjI1j0(ljlljolj0j0,2)+jjI1j0(ljlljolj0j0,3)*256+jjI1j0(ljlljolj0j0,4)*65536+jjI1j0(ljlljolj0j0,5)*16777216
-if I1oioI~=#ljlljolj0j0-5 or lOO10Li0LOIL>4 then loOLIIojOo("VM invalid constant",0) end
-local jiOo1iO0ILolL=LL1Ooij0oOll(ljlljolj0j0,6,5+I1oioI)
-local ji1lIO0Oji0I
-if lOO10Li0LOIL==0 then ji1lIO0Oji0I=IiIoOIoo0lo0(jiOo1iO0ILolL) elseif lOO10Li0LOIL==1 then ji1lIO0Oji0I=jiOo1iO0ILolL elseif lOO10Li0LOIL==2 then ji1lIO0Oji0I=1/0 elseif lOO10Li0LOIL==3 then ji1lIO0Oji0I=-1/0 else ji1lIO0Oji0I=0/0 end
-IIIiIljo[IlOo1oLOlj]=ji1lIO0Oji0I
-return ji1lIO0Oji0I
-end
-local jo1I1Ool1={}
-local ILOlo0lj=i11ijjjjo1LO()
-for iIL1Ij11OO0=1,ILOlo0lj do local joli0LIj=i11ijjjjo1LO() local L10L10oOIL10=i11ijjjjo1LO() jo1I1Ool1[joli0LIj]=L10L10oOIL10 end
-local jioOIij=IlOIoI1ioIo(0)
-if iolOjli~=#jo1L0iIOLIl+1 then loOLIIojOo("VM trailing payload data",0) end
-jo1L0iIOLIl=nil
-LLI0OoOOIL=nil
-local lO0LoO0
-local function IjIjL10Io0(jioOIij,lIlLol1)
-return function(...) return lO0LoO0(jioOIij,lIlLol1,ijlO0OoLOil(...)) end
-end
-lO0LoO0=function(jioOIij,lIlLol1,jooIl1j)
-local Loij0l={}
-local jjILo1IIoOi=0
-local I1joOooi=jioOIij[1]
-local ljj01lLj0=jooIl1j.n
-for joli0LIj=1,I1joOooi do Loij0l[joli0LIj-1]=jooIl1j[joli0LIj] end
-local i00oLoO,jIoliOjI={},0
-if jioOIij[2]==1 then jIoliOjI=ljj01lLj0-I1joOooi; if jIoliOjI<0 then jIoliOjI=0 end; for joli0LIj=1,jIoliOjI do i00oLoO[joli0LIj]=jooIl1j[I1joOooi+joli0LIj] end end
-local IoI1IIi,LO0L00jLolOj,I1Ijjj11LllOL=jioOIij[3],jioOIij[4],jioOIij[5]
-local Li101j1loL0jO=jioOIij[7]
-local llioiLl0j=1
-local iolOiliLl1=0
-while true do
-local lliLoiIO=IoI1IIi[llioiLl0j]
-if lliLoiIO==nil then loOLIIojOo("VM invalid instruction address",0) end
-local iilI0iLiO=(jioOIij[8]+llioiLl0j*65599)%4294967296
-llioiLl0j=llioiLl0j+1
-iilI0iLiO=(iilI0iLiO*1664525+1013904223)%4294967296
-local ijo0jjjo=(lliLoiIO[1]-iilI0iLiO)%65536
-iilI0iLiO=(iilI0iLiO*1664525+1013904223)%4294967296
-local joli0LIj=(lliLoiIO[4]-iilI0iLiO)%65536
-iilI0iLiO=(iilI0iLiO*1664525+1013904223)%4294967296
-local L10L10oOIL10=(lliLoiIO[2]-iilI0iLiO)%4294967296
-iilI0iLiO=(iilI0iLiO*1664525+1013904223)%4294967296
-local IllILjl1l=(lliLoiIO[3]-iilI0iLiO)%4294967296
-local ioL1LLIOIoO=jo1I1Ool1[ijo0jjjo]
-if (llioiLl0j*llioiLl0j*llioiLl0j-llioiLl0j)%6~=0 then jjILo1IIoOi=jjILo1IIoOi+6 end
-if (llioiLl0j*(llioiLl0j+1)*(llioiLl0j+2))%3~=0 then jjILo1IIoOi=jjILo1IIoOi-4 end
-if ioL1LLIOIoO==3 then
-io0iLoOIl[Ll0o1OoI(LO0L00jLolOj,Li101j1loL0jO,L10L10oOIL10+1,jioOIij[9])]=Loij0l[joli0LIj]
-elseif ioL1LLIOIoO==19 then
-local I1oiL0I=Loij0l[joli0LIj]
-if L0LO1oIoOij(I1oiL0I)~=iILillOjoo then
-local Ii11iiIoiLO=Ll1ol0OIOio0(I1oiL0I)
-if Ii11iiIoiLO~=nil and L0LO1oIoOij(Ii11iiIoiLO)~=io1ILoiOIo0i then loOLIIojOo("Protected iterator metatables require an explicit iterator function",0) end
-local IOIiOLLjI1j11=Ii11iiIoiLO and IILI0Ioj(Ii11iiIoiLO,IO01jO1lIi)
-if IOIiOLLjI1j11~=nil then
-Loij0l[joli0LIj],Loij0l[joli0LIj+1],Loij0l[joli0LIj+2]=IOIiOLLjI1j11(I1oiL0I)
-elseif L0LO1oIoOij(I1oiL0I)==io1ILoiOIo0i and (Ii11iiIoiLO==nil or IILI0Ioj(Ii11iiIoiLO,ijI0I0Llj1oLj)==nil) then
-Loij0l[joli0LIj],Loij0l[joli0LIj+1],Loij0l[joli0LIj+2]=iOj0illj,I1oiL0I,nil
-end
-end
-elseif ioL1LLIOIoO==2 then
-for I1oiL0I=joli0LIj,joli0LIj+2 do
-Loij0l[I1oiL0I]=IiIoOIoo0lo0(Loij0l[I1oiL0I])
-if Loij0l[I1oiL0I]==nil then loOLIIojOo("Numeric for bounds and step must be numbers",0) end
-end
-local Ii11iiIoiLO=Loij0l[joli0LIj+2]
-local IOIiOLLjI1j11
-if Ii11iiIoiLO>0 then IOIiOLLjI1j11=Loij0l[joli0LIj]<=Loij0l[joli0LIj+1] else IOIiOLLjI1j11=Loij0l[joli0LIj]>=Loij0l[joli0LIj+1] end
-if IOIiOLLjI1j11 then Loij0l[joli0LIj+3]=Loij0l[joli0LIj] else llioiLl0j=L10L10oOIL10+1 end
-elseif ioL1LLIOIoO==39 then
-Loij0l[joli0LIj]=(Loij0l[L10L10oOIL10]<Loij0l[IllILjl1l])
-elseif ioL1LLIOIoO==23 then
-Loij0l[joli0LIj]={Loij0l[L10L10oOIL10]}
-elseif ioL1LLIOIoO==13 then
-Loij0l[joli0LIj]=io0iLoOIl[Ll0o1OoI(LO0L00jLolOj,Li101j1loL0jO,L10L10oOIL10+1,jioOIij[9])]
-elseif ioL1LLIOIoO==22 then
-Loij0l[joli0LIj]=(Loij0l[L10L10oOIL10]<=Loij0l[IllILjl1l])
-elseif ioL1LLIOIoO==37 then
-Loij0l[joli0LIj]=(Loij0l[L10L10oOIL10]==Loij0l[IllILjl1l])
-elseif ioL1LLIOIoO==16 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]^Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==28 then
-for I1oiL0I=joli0LIj,joli0LIj+L10L10oOIL10 do Loij0l[I1oiL0I]=nil end
-elseif ioL1LLIOIoO==35 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10][1]
-elseif ioL1LLIOIoO==41 then
-Loij0l[joli0LIj]=(Loij0l[L10L10oOIL10]>Loij0l[IllILjl1l])
-elseif ioL1LLIOIoO==8 then
-Loij0l[joli0LIj]=#Loij0l[L10L10oOIL10]
-elseif ioL1LLIOIoO==9 then
-Loij0l[joli0LIj]=lIlLol1[L10L10oOIL10+1][1]
-elseif ioL1LLIOIoO==36 then
-Loij0l[joli0LIj]=(Loij0l[L10L10oOIL10]~=Loij0l[IllILjl1l])
-elseif ioL1LLIOIoO==34 then
-Loij0l[joli0LIj]=(L10L10oOIL10~=0)
-elseif ioL1LLIOIoO==30 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10][Loij0l[IllILjl1l]]
-elseif ioL1LLIOIoO==21 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]
-elseif ioL1LLIOIoO==40 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]%Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==26 then
-local Ii11iiIoiLO=Loij0l[joli0LIj]
-local IOIiOLLjI1j11
-if L10L10oOIL10==0 then IOIiOLLjI1j11=iolOiliLl1-joli0LIj-1 else IOIiOLLjI1j11=L10L10oOIL10-1 end
-local LOLL10={}
-for I1oiL0I=1,IOIiOLLjI1j11 do LOLL10[I1oiL0I]=Loij0l[joli0LIj+I1oiL0I] end
-local i1joiL0O=ijlO0OoLOil(Ii11iiIoiLO(L111LO1O00I(LOLL10,1,IOIiOLLjI1j11)))
-if IllILjl1l==0 then
-local ijlji0OOljL11I=i1joiL0O.n
-for I1oiL0I=1,ijlji0OOljL11I do Loij0l[joli0LIj+I1oiL0I-1]=i1joiL0O[I1oiL0I] end
-iolOiliLl1=joli0LIj+ijlji0OOljL11I
-else
-for I1oiL0I=1,IllILjl1l-1 do Loij0l[joli0LIj+I1oiL0I-1]=i1joiL0O[I1oiL0I] end
-end
-elseif ioL1LLIOIoO==6 then
-Loij0l[joli0LIj][Loij0l[L10L10oOIL10]]=Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==18 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]..Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==29 then
-if L10L10oOIL10==0 then
-for I1oiL0I=1,jIoliOjI do Loij0l[joli0LIj+I1oiL0I-1]=i00oLoO[I1oiL0I] end
-iolOiliLl1=joli0LIj+jIoliOjI
-else
-for I1oiL0I=1,L10L10oOIL10-1 do Loij0l[joli0LIj+I1oiL0I-1]=i00oLoO[I1oiL0I] end
-end
-elseif ioL1LLIOIoO==33 then
-Loij0l[joli0LIj]={}
-elseif ioL1LLIOIoO==17 then
-local Ii11iiIoiLO=Loij0l[joli0LIj]
-local ljlljolj0j0=Loij0l[joli0LIj+1]
-local lOO10Li0LOIL=Loij0l[joli0LIj+2]
-local i1joiL0O=ijlO0OoLOil(Ii11iiIoiLO(ljlljolj0j0,lOO10Li0LOIL))
-local ijlji0OOljL11I=i1joiL0O[1]
-if ijlji0OOljL11I~=nil then
-Loij0l[joli0LIj+2]=ijlji0OOljL11I
-for I1oiL0I=1,L10L10oOIL10 do Loij0l[joli0LIj+3+I1oiL0I-1]=i1joiL0O[I1oiL0I] end
-llioiLl0j=IllILjl1l+1
-end
-elseif ioL1LLIOIoO==10 then
-if (not not Loij0l[joli0LIj])==(L10L10oOIL10~=0) then llioiLl0j=IllILjl1l+1 end
-elseif ioL1LLIOIoO==31 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]/Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==25 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]+Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==42 then
-Loij0l[joli0LIj]=not Loij0l[L10L10oOIL10]
-elseif ioL1LLIOIoO==32 then
-Loij0l[joli0LIj+1]=Loij0l[L10L10oOIL10]; Loij0l[joli0LIj]=Loij0l[L10L10oOIL10][Loij0l[IllILjl1l]]
-elseif ioL1LLIOIoO==1 then
-jjILo1IIoOi=(jjILo1IIoOi+L10L10oOIL10)%(IllILjl1l+1)
-elseif ioL1LLIOIoO==14 then
-local Ii11iiIoiLO=I1Ijjj11LllOL[L10L10oOIL10+1]
-local LOLL10={}
-local i1joiL0O=Ii11iiIoiLO[6]
-for I1oiL0I=1,#i1joiL0O do
-local ijlji0OOljL11I=i1joiL0O[I1oiL0I]
-if ijlji0OOljL11I[1]==1 then LOLL10[I1oiL0I]=Loij0l[ijlji0OOljL11I[2]] else LOLL10[I1oiL0I]=lIlLol1[ijlji0OOljL11I[2]+1] end
-end
-Loij0l[joli0LIj]=IjIjL10Io0(Ii11iiIoiLO,LOLL10)
-elseif ioL1LLIOIoO==5 then
-lIlLol1[L10L10oOIL10+1][1]=Loij0l[joli0LIj]
-elseif ioL1LLIOIoO==38 then
-llioiLl0j=L10L10oOIL10+1
-elseif ioL1LLIOIoO==4 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]//Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==44 then
-local IOIiOLLjI1j11
-if L10L10oOIL10==0 then IOIiOLLjI1j11=iolOiliLl1-joli0LIj-1 else IOIiOLLjI1j11=L10L10oOIL10 end
-local Ii11iiIoiLO=Loij0l[joli0LIj]
-for I1oiL0I=1,IOIiOLLjI1j11 do Ii11iiIoiLO[IllILjl1l+I1oiL0I]=Loij0l[joli0LIj+I1oiL0I] end
-elseif ioL1LLIOIoO==43 then
-Loij0l[joli0LIj]=(Loij0l[L10L10oOIL10]>=Loij0l[IllILjl1l])
-elseif ioL1LLIOIoO==27 then
-Loij0l[joli0LIj]=Ll0o1OoI(LO0L00jLolOj,Li101j1loL0jO,L10L10oOIL10+1,jioOIij[9])
-elseif ioL1LLIOIoO==24 then
-Loij0l[joli0LIj]=-Loij0l[L10L10oOIL10]
-elseif ioL1LLIOIoO==12 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]*Loij0l[IllILjl1l]
-elseif ioL1LLIOIoO==7 then
-Loij0l[joli0LIj]=Loij0l[joli0LIj]+Loij0l[joli0LIj+2]
-local Ii11iiIoiLO=Loij0l[joli0LIj+2]
-local IOIiOLLjI1j11
-if Ii11iiIoiLO>0 then IOIiOLLjI1j11=Loij0l[joli0LIj]<=Loij0l[joli0LIj+1] else IOIiOLLjI1j11=Loij0l[joli0LIj]>=Loij0l[joli0LIj+1] end
-if IOIiOLLjI1j11 then Loij0l[joli0LIj+3]=Loij0l[joli0LIj]; llioiLl0j=L10L10oOIL10+1 end
-elseif ioL1LLIOIoO==15 then
-local IOIiOLLjI1j11
-if L10L10oOIL10==0 then IOIiOLLjI1j11=iolOiliLl1-joli0LIj else IOIiOLLjI1j11=L10L10oOIL10-1 end
-local LOLL10={}
-for I1oiL0I=1,IOIiOLLjI1j11 do LOLL10[I1oiL0I]=Loij0l[joli0LIj+I1oiL0I-1] end
-return L111LO1O00I(LOLL10,1,IOIiOLLjI1j11)
-elseif ioL1LLIOIoO==20 then
-Loij0l[L10L10oOIL10][1]=Loij0l[joli0LIj]
-elseif ioL1LLIOIoO==11 then
-Loij0l[joli0LIj]=Loij0l[L10L10oOIL10]-Loij0l[IllILjl1l]
-else loOLIIojOo() end
-end
-return jjILo1IIoOi
-end
-return lO0LoO0(jioOIij,{},ijlO0OoLOil(...))
+-- Set up button connections
+StartButton.MouseButton1Click:Connect(StartFling)
+StopButton.MouseButton1Click:Connect(StopFling)
+SelectAllButton.MouseButton1Click:Connect(function() ToggleAllPlayers(true) end)
+DeselectAllButton.MouseButton1Click:Connect(function() ToggleAllPlayers(false) end)
+CloseButton.MouseButton1Click:Connect(function()
+    StopFling()
+    ScreenGui:Destroy()
+end)
+-- Handle player joining/leaving
+Players.PlayerAdded:Connect(RefreshPlayerList)
+Players.PlayerRemoving:Connect(function(player)
+    if SelectedTargets[player.Name] then
+        SelectedTargets[player.Name] = nil
+    end
+    RefreshPlayerList()
+    UpdateStatus()
+end)
+-- Initialize
+RefreshPlayerList()
+UpdateStatus()
+-- Success message
+Message("Loaded!!", "Xeno Fling Gui V2 Loaded!", 3)
